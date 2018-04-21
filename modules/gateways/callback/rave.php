@@ -40,7 +40,7 @@ $transactionId = $_GET["txref"];
 $paymentAmount = $_GET["a"];
 $success = false;
 
-$apiLink = "http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/";
+$apiLink = "https://ravesandboxapi.flutterwave.com/";
 if ($gatewayParams['testMode'] != 'on') {
     $apiLink = "https://api.ravepay.co/";
 }

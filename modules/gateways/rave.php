@@ -151,7 +151,7 @@ function rave_config()
 
 function rave_link($params)
 {
-    $stagingUrl = 'https://rave-api-v2.herokuapp.com';
+    $stagingUrl = 'https://ravesandboxapi.flutterwave.com';
     $liveUrl = 'https://api.ravepay.co';
     $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443);
 
@@ -252,6 +252,7 @@ function rave_link($params)
         function pay() {
         var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
         getpaidSetup(data);}
+        pay();
         </script>
         ";
     }
@@ -284,6 +285,7 @@ function rave_link($params)
           }
 
     });}
+    pay();
         </script>
         ";
     }
