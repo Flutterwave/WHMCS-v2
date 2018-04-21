@@ -269,7 +269,7 @@ function rave_link($params)
             $datas
         . "
         onclose: function() {
-            window.location = '" . $whmcsLink . "/modules/gateways/callback/rave.php?txref=" . $postfields['txref'] . "&cancelled=true';
+          //  window.location = '" . $whmcsLink . "/modules/gateways/callback/rave.php?txref=" . $postfields['txref'] . "&cancelled=true';
         },
           callback: function(response) {
             var flw_ref = response.tx.flwRef; // collect flwRef returned and pass to a                  server page to complete status check.
