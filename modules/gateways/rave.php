@@ -279,8 +279,6 @@ function rave_link($params)
               response.tx.chargeResponseCode == '0'
             ) {
               window.location = '".$whmcsLink ."/modules/gateways/callback/rave.php?txref=".$postfields['txref']."';
-            } else {
-              window.location = '".$whmcsLink ."/modules/gateways/callback/rave.php?txref=".$postfields['txref']."';
             }
           }
 
