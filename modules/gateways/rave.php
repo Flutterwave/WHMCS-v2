@@ -166,10 +166,10 @@ function rave_link($params)
 
     
     $payButtonText = $params['payButtonText'];
-    $cBname = $params['cBname'];
-    $cBdescription = $params['cBdescription'];
+    $cBname = filter_var($params['cBname'], FILTER_SANITIZE_STRING);
+    $cBdescription = filter_var($params['cBdescription'], FILTER_SANITIZE_STRING);
     $whmcsLink = 'http' . ($isSSL ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . substr(str_replace('/admin/', '/', $_SERVER['REQUEST_URI']), 0, strrpos($_SERVER['REQUEST_URI'], '/'));
-    $whmcsLogo = $params['whmcsLogo'];
+    $whmcsLogo = filter_var($params['whmcsLogo'], FILTER_SANITIZE_URL);
     $paymentMethod = $params['paymentMethod'];
     $country = $params['country'];
 
@@ -249,10 +249,11 @@ function rave_link($params)
         </form>
         <script type='text/javascript' src='" . $baseUrl . "/flwv3-pug/getpaidx/api/flwpbf-inline.js'></script>
         <script>
-        function pay() {
-        var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
-        getpaidSetup(data);}
-        pay();
+            function pay() {
+                var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
+                getpaidSetup(data);
+            }
+            pay();
         </script>
         ";
     }
@@ -263,27 +264,25 @@ function rave_link($params)
         </form>
         <script type='text/javascript' src='" . $baseUrl . "/flwv3-pug/getpaidx/api/flwpbf-inline.js'></script>
         <script>
-        function pay() {
-        var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
-        getpaidSetup({".
-            $datas
-        . "
-        onclose: function() {
-          //  window.location = '" . $whmcsLink . "/modules/gateways/callback/rave.php?txref=" . $postfields['txref'] . "&cancelled=true';
-        },
-          callback: function(response) {
-            var flw_ref = response.tx.flwRef; // collect flwRef returned and pass to a                  server page to complete status check.
-            console.log('This is the response returned after a charge', response);
-            if (
-              response.tx.chargeResponseCode == '00' ||
-              response.tx.chargeResponseCode == '0'
-            ) {
-              window.location = '".$whmcsLink ."/modules/gateways/callback/rave.php?txref=".$postfields['txref']."';
-            }
-          }
+            function pay() {
+                var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
+                getpaidSetup({".
+                    $datas
+                    . "
+                    onclose: function() {},
+                    callback: function(response) {
+                        var flw_ref = response.tx.flwRef; // collect flwRef returned and pass to a server page to complete status check.
+                        //console.log('This is the response returned after a charge', response);
+                        if ( response.tx.chargeResponseCode == '00' || response.tx.chargeResponseCode == '0' ) {
+                            window.location = '".$whmcsLink ."/modules/gateways/callback/rave.php?txref=".$postfields['txref']."';
+                        }
 
-    });}
-    pay();
+                        x.close(); //close payment modal
+                    }
+                    
+                });
+            }
+            pay();
         </script>
         ";
     }
