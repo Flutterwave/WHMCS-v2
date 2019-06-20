@@ -23,7 +23,7 @@ function rave_MetaData()
 {
     return array(
         'DisplayName' => 'Rave by Flutterwave',
-        'APIVersion' => '1.1', // Use API Version 1.1
+        'APIVersion' => '1.2', // Use API Version 1.1
         'DisableLocalCredtCardInput' => true,
         'TokenisedStorage' => false,
     );
@@ -171,7 +171,7 @@ function rave_link($params)
     $whmcsLink = 'http' . ($isSSL ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . substr(str_replace('/admin/', '/', $_SERVER['REQUEST_URI']), 0, strrpos($_SERVER['REQUEST_URI'], '/'));
     $whmcsLogo = filter_var($params['whmcsLogo'], FILTER_SANITIZE_URL);
     $paymentMethod = $params['paymentMethod'];
-    $country = $params['country'];
+    // $country = $params['country']; // will be replaced with the currency switching
 
 
     // Invoice Parameters
@@ -180,6 +180,26 @@ function rave_link($params)
     $amount = $params['amount'];
     $currencyCode = $params['currency'];
     $strippedAmount = $amount + 0;
+
+    // Switch country based on currency code
+    switch ($currencyCode) {
+        case 'KES':
+          $country = 'KE';
+          break;
+        case 'GHS':
+          $country = 'GH';
+          break;
+        case 'ZAR':
+          $country = 'ZA';
+          break;
+        case 'TZS':
+          $country = 'TZ';
+          break;
+        
+        default:
+          $country = 'NG';
+          break;
+    }
 
 
     // Client Parameters
