@@ -100,7 +100,7 @@ function requery()
     $data = array(
         'txref' => $txref,
         'SECKEY' => $GLOBALS['secretKey'],
-        'last_attempt' => '1'
+        // 'last_attempt' => '1'
         // 'only_successful' => '1'
     );
 

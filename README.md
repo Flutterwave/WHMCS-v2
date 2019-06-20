@@ -37,9 +37,8 @@ Rave is available in:
 
 ```bash
 5438898014560229
-cvv 789
-Expiry Month 09
-Expiry Year 19
+cvv 564
+Expiry: 10/20
 Pin 3310
 otp 12345
 ```
