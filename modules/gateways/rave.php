@@ -80,7 +80,8 @@ function rave_config()
                 'NG' => 'Nigeria',
                 'GH' => 'Ghana',
                 'KE' => 'Kenya',
-                'ZA' => 'South Africa'
+                'ZA' => 'South Africa',
+                'UG' => 'Uganda'
                 
             ),
             'Description' => 'Choose your country!',
@@ -197,6 +198,9 @@ function rave_link($params)
         case 'TZS':
           $country = 'TZ';
           break;
+        case 'UGX':
+            $country = 'UG';
+            break;
         
         default:
           $country = 'NG';
