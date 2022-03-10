@@ -105,6 +105,13 @@ function rave_config()
             'Description' => 'Enter secret key here',
         ),
 
+        'secretHash' => array(
+            'FriendlyName' => 'Live Secret Hash',
+            'Type' => 'text',
+            'Size' => '50',
+            'Default' => 'RAVE-SECRET-HASH',
+            'Description' => 'Enter secret hash here',
+        ),
         'testPBFPubKey' => array(
             'FriendlyName' => 'Test Public Key',
             'Type' => 'text',
@@ -119,6 +126,13 @@ function rave_config()
             'Size' => '50',
             'Default' => '',
             'Description' => 'Enter secret key here',
+        ),
+        'testSecretHash' => array(
+            'FriendlyName' => 'Test Secret Hash',
+            'Type' => 'text',
+            'Size' => '50',
+            'Default' => 'RAVE-SECRET-HASH',
+            'Description' => 'Enter secret hash here',
         ),
 
         'paymentWay' => array(
