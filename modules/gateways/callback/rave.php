@@ -26,19 +26,62 @@ if (!$gatewayParams['type']) {
 }
 
 $secretKey = $gatewayParams['testSecretKey'];
+$secretHash  = $gatewayParams['testSecretHash'];
 
 if ($gatewayParams['testMode'] != 'on') {
     $secretKey = $gatewayParams['secretKey'];
+    $secretHash  = $gatewayParams['secretHash'];
 }
 
+$body = @file_get_contents("php://input"); //listen for post data
 
-// Retrieve data returned in payment gateway callback
-// Varies per payment gateway
-$invoiceId = explode('_', $_GET["txref"]);
-$invoiceId = $invoiceId[0];
-$transactionId = $_GET["txref"];
-$paymentAmount = $_GET["a"];
-$success = false;
+if(!$body){
+    // Retrieve data returned in payment gateway callback
+    // Varies per payment gateway
+    $invoiceId = explode('_', $_GET["txref"]);
+    $invoiceId = $invoiceId[0];
+    $transactionId = $_GET["txref"];
+    $paymentAmount = $_GET["a"];
+    $txref = $_GET["txref"];
+    $success = false;
+    $isHook = false;
+}else{
+    $signature = (isset($_SERVER['HTTP_VERIF_HASH']) ? $_SERVER['HTTP_VERIF_HASH'] : '');
+
+    // Store the same signature on your server as an env variable and check against what was sent in the headers
+    $local_signature = $secretHash;
+
+    // confirm the event's signature
+    if( $signature !== $local_signature ){
+        echo "Invalid Hook Signature";
+        exit();
+    }
+
+    http_response_code(200); 
+
+    $response = json_decode($body);
+
+    if ($response->status == 'successful'|| $response->data->status == 'successful') {
+        $success = true;
+        $invoiceId = explode('_', $response->txRef ?? $response->data->tx_ref);
+        $invoiceId = $invoiceId[0];
+        $transactionId = $response->txRef ?? $response->data->tx_ref;
+        $paymentAmount = $response->amount ?? $response->data->amount;
+        $txref = $response->txRef ?? $response->data->tx_ref;
+        $isHook = true;
+    } else {
+        $success = false;
+        $invoiceId = explode('_', $response->txRef ?? $response->data->tx_ref);
+        $invoiceId = $invoiceId[0];
+        $transactionId = $response->txRef ?? $response->data->tx_ref;
+        $paymentAmount = $response->amount ?? $response->data->amount;
+        $txref = $response->txRef ?? $response->data->tx_ref;
+        $isHook = true;
+    }
+
+
+}
+
 
 $apiLink = "https://ravesandboxapi.flutterwave.com/";
 if ($gatewayParams['testMode'] != 'on') {
@@ -87,13 +130,12 @@ $money = $cash + 0;
 $requeryCount = 0;
 
 //Verify Transaction
-if (isset($_GET['txref'])) {
-    return requery();
+if (isset($txref)) {
+    return requery($txref);
 }
 
-function requery()
+function requery($txref)
 {
-    $txref = $_GET['txref'];
     $GLOBALS['requeryCount']++;
 
 
@@ -135,7 +177,7 @@ function requery()
                 return failed($resp->data);
             } else {
                 sleep(3);
-                return requery();
+                return requery($txref);
             }
         }
     } else {
@@ -143,7 +185,7 @@ function requery()
             return failed($resp->data);
         } else {
             sleep(3);
-            return requery();
+            return requery($txref);
         }
     }
 }
@@ -155,6 +197,7 @@ function requery()
  * */
 function verifyTransaction($data)
 {
+    global $isHook;
     $currency = $GLOBALS['invoice_currency_code'];
     $amount = $GLOBALS['money'];
     $invoiceId = $GLOBALS['invoiceId'];
@@ -179,9 +222,11 @@ function verifyTransaction($data)
                 . "\r\nResponse: " . $data;
             logTransaction($GLOBALS['gatewayModuleName'], $log, "Successful");
         }
+        if($isHook) return;
         header("Location: " . $invoice_url);
         exit;
     } else {
+        if($isHook) return;
         return failed($data);
     }
 }
