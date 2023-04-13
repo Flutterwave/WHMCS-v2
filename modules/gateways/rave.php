@@ -81,10 +81,11 @@ function rave_config()
                 'GH' => 'Ghana',
                 'ZM' => 'Zambia',
                 'KE' => 'Kenya',
+                'TZ' => 'Tanzania',
                 'ZA' => 'South Africa',
                 'UG' => 'Uganda',
                 'US' => 'United States'
-                
+
             ),
             'Description' => 'Choose your country!',
         ),
@@ -169,7 +170,7 @@ function rave_link($params)
         $secretKey = $params['secretKey'];
     }
 
-    
+
     $payButtonText = $params['payButtonText'];
     $cBname = filter_var($params['cBname'], FILTER_SANITIZE_STRING);
     $cBdescription = filter_var($params['cBdescription'], FILTER_SANITIZE_STRING);
@@ -189,23 +190,23 @@ function rave_link($params)
     // Switch country based on currency code
     switch ($currencyCode) {
         case 'KES':
-          $country = 'KE';
-          break;
+            $country = 'KE';
+            break;
         case 'GHS':
-          $country = 'GH';
-          break;
+            $country = 'GH';
+            break;
         case 'ZAR':
-          $country = 'ZA';
-          break;
+            $country = 'ZA';
+            break;
         case 'TZS':
-          $country = 'TZ';
-          break;
+            $country = 'TZ';
+            break;
         case 'UGX':
             $country = 'UG';
             break;
         default:
-          $country = 'NG';
-          break;
+            $country = 'NG';
+            break;
     }
 
 
@@ -240,7 +241,7 @@ function rave_link($params)
         $postfields['redirect_url'] = $whmcsLink . '/modules/gateways/callback/rave.php';
         $postfields['hosted_payment'] = 1;
     }
-    
+
 
     ksort($postfields);
     $stringToHash = "";
@@ -267,7 +268,7 @@ function rave_link($params)
     $datas = "";
 
     foreach ($transactionData as $key => $value) {
-        $datas.= $key.": '". $value."',";
+        $datas .= $key . ": '" . $value . "',";
     }
 
     if ($params['paymentWay'] == 'redirection') {
@@ -283,9 +284,7 @@ function rave_link($params)
             pay();
         </script>
         ";
-    }
-
-    else{
+    } else {
         $htmlOutput = "<form onsubmit='event.preventDefault(); pay();'>
           <button type='submit' class='btn btn-primary' style='cursor:pointer;' value='" . $payButtonText . "' id='ravepaybutton'>" . $payButtonText . "</button>
         </form>
@@ -293,15 +292,15 @@ function rave_link($params)
         <script>
             function pay() {
                 var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
-                getpaidSetup({".
-                    $datas
-                    . "
+                getpaidSetup({" .
+            $datas
+            . "
                     onclose: function() {},
                     callback: function(response) {
                         var flw_ref = response.tx.flwRef; // collect flwRef returned and pass to a server page to complete status check.
                         //console.log('This is the response returned after a charge', response);
                         if ( response.tx.chargeResponseCode == '00' || response.tx.chargeResponseCode == '0' ) {
-                            window.location = '".$whmcsLink ."/modules/gateways/callback/rave.php?txref=".$postfields['txref']."';
+                            window.location = '" . $whmcsLink . "/modules/gateways/callback/rave.php?txref=" . $postfields['txref'] . "';
                         }
 
                         x.close(); //close payment modal
