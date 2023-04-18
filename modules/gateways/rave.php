@@ -243,16 +243,9 @@ function rave_link($params)
     
 
     ksort($postfields);
-    $stringToHash = "";
-    foreach ($postfields as $key => $val) {
-        $stringToHash .= $val;
-    }
-
-
-    $stringToHash .= $secretKey;
-
-    $hashedValue = hash('sha256', $stringToHash);
-
+    
+    $completeHash = $postfields['customer_email'] . $postfields['txref'] . $postfields['currency'] . $postfields['amount'] . $secretKey;
+    $hashedValue = hash('sha256', $completeHash);
     $env = "staging";
 
     $baseUrl = $stagingUrl;
@@ -261,7 +254,7 @@ function rave_link($params)
         $baseUrl = $liveUrl;
     }
 
-    $transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue));
+    $transactionData = array_merge($postfields, array('checkout_hash' => $hashedValue));
     $json = json_encode($transactionData);
 
     $datas = "";
