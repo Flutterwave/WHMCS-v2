@@ -244,7 +244,8 @@ function rave_link($params)
 
     ksort($postfields);
     
-    $completeHash = $postfields['customer_email'] . $postfields['txref'] . $postfields['currency'] . $postfields['amount'] . hash('sha256',$secretKey);
+    # format: sha256(amount+currency+customeremail+txref+sha256(secretkey)).
+    $completeHash = $postfields['amount'] . $postfields['currency'] . $postfields['customer_email'] . $postfields['txref'] . hash('sha256',$secretKey);
     $hashedValue = hash('sha256', $completeHash);
     $env = "staging";
 
