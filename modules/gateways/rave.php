@@ -255,7 +255,7 @@ function rave_link($params)
         $baseUrl = $liveUrl;
     }
 
-    $transactionData = array_merge($postfields, array('checkout_hash' => $hashedValue));
+    $transactionData = array_merge($postfields, array('payload_hash' => $hashedValue));
     $json = json_encode($transactionData);
 
     $datas = "";
