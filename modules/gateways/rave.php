@@ -237,7 +237,7 @@ function rave_link($params)
     $postfields['amount'] = $strippedAmount;
     $postfields['currency'] = $currencyCode;
     if ($params['paymentWay'] == 'redirection') {
-        $postfields['redirect_url'] = $whmcsLink . '/modules/gateways/callback/rave.php';
+        $postfields['redirect_url'] = $whmcsLink . '/modules/gateways/callback/rave.php?txref='. $postfields['txref'];
         $postfields['hosted_payment'] = 1;
     }
     
