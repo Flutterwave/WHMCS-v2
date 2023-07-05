@@ -38,7 +38,7 @@ $tx_ref = filter_input(INPUT_GET, "txref");
 $invoiceId = explode('_', $tx_ref);
 $invoiceId = $invoiceId[0];
 $transactionId = $tx_ref;
-$paymentAmount = filter_input(INPUT_GET, "a");
+// $paymentAmount = filter_input(INPUT_GET, "a");
 $success = false;
 
 $apiLink = "https://ravesandboxapi.flutterwave.com/";
