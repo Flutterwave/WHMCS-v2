@@ -34,10 +34,11 @@ if ($gatewayParams['testMode'] != 'on') {
 
 // Retrieve data returned in payment gateway callback
 // Varies per payment gateway
-$invoiceId = explode('_', $_GET["txref"]);
+$tx_ref = filter_input(INPUT_GET, "txref");
+$invoiceId = explode('_', $tx_ref);
 $invoiceId = $invoiceId[0];
-$transactionId = $_GET["txref"];
-$paymentAmount = $_GET["a"];
+$transactionId = $tx_ref;
+// $paymentAmount = filter_input(INPUT_GET, "a");
 $success = false;
 
 $apiLink = "https://ravesandboxapi.flutterwave.com/";
@@ -87,13 +88,12 @@ $money = $cash + 0;
 $requeryCount = 0;
 
 //Verify Transaction
-if (isset($_GET['txref'])) {
-    return requery();
+if (isset($tx_ref)) {
+    return requery($tx_ref);
 }
 
-function requery()
+function requery($txref)
 {
-    $txref = $_GET['txref'];
     $GLOBALS['requeryCount']++;
 
 
@@ -204,7 +204,7 @@ function failed($data)
             . "\r\nResponse: " . $data;
         logTransaction($gatewayModuleName, $log, "Failed");
     }
-    $error = ($_GET['cancelled'] == true) ? "You cancelled the transaction" : "Transaction Failed";
+    $error = (!empty( filter_input(INPUT_GET, "cancelled") ) && filter_input(INPUT_GET, "cancelled") == true) ? "You cancelled the transaction" : "Transaction Failed";
 
     echo '<!DOCTYPE html>
     <html lang="">
